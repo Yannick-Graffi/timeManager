@@ -1,8 +1,11 @@
 defmodule TimeManagerWeb.ClockController do
   use TimeManagerWeb, :controller
 
+  import Ecto.Query
+
   alias TimeManager.Accounts
   alias TimeManager.Accounts.Clock
+  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -15,8 +18,11 @@ defmodule TimeManagerWeb.ClockController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    clock = Accounts.get_clock!(id)
-    render(conn, :show, clock: clock)
+  def show(conn, %{"userID" => userID}) do
+    # clocks = Repo.all(Clock, users: userID)
+    query = from c in Clock,
+                         where: c.users_id == ^userID
+    clocks = Repo.all(query)
+    render(conn, :index, clocks: clocks)
   end
 end
