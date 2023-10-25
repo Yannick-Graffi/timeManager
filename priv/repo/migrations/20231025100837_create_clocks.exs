@@ -5,7 +5,7 @@ defmodule TimeManager.Repo.Migrations.CreateClocks do
     create table(:clocks) do
       add :time, :utc_datetime
       add :status, :boolean, default: false, null: false
-      add :user_id, references(:users)
+      add :users_id, references(:users)
     end
   end
 end
