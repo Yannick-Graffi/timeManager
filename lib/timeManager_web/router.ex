@@ -1,8 +1,5 @@
 defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
-  alias TimeManagerWeb.UserController
-  alias TimeManagerWeb.ClockController
-  alias TimeManagerWeb.WorkingTimeController
 
   pipeline :api do
     plug :accepts, ["json"]
