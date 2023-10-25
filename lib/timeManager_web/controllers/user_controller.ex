@@ -6,10 +6,17 @@ defmodule TimeManagerWeb.UserController do
 
   action_fallback TimeManagerWeb.FallbackController
 
-  def index(conn, _params) do
+  def index(conn, %{"email" => email, "username" => username}) do
     users = Accounts.list_users()
     render(conn, :index, users: users)
   end
+
+  def index(conn, _params) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: "email and username parameters are required"})
+  end
+
 
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
