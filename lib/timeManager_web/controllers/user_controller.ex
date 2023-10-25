@@ -3,12 +3,20 @@ defmodule TimeManagerWeb.UserController do
 
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
+  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
   def index(conn, %{"email" => email, "username" => username}) do
-    users = Accounts.list_users()
-    render(conn, :index, users: users)
+
+    try do
+      user = Repo.get_by!(User, email: email, username: username)
+      render(conn, :show, user: user)
+    rescue
+      e in Ecto.NoResultsError -> conn
+                                  |> put_status(:bad_request)
+                                  |> json(%{error: "email or username are invalid"})
+    end
   end
 
   def index(conn, _params) do
