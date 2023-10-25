@@ -1,5 +1,8 @@
 defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
+  alias TimeManagerWeb.UserController
+  alias TimeManagerWeb.ClockController
+  alias TimeManagerWeb.WorkingTimeController
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -7,6 +10,14 @@ defmodule TimeManagerWeb.Router do
 
   scope "/api", TimeManagerWeb do
     pipe_through :api
+
+    resources "/users", UserController, except: [:new, :edit]
+    resources "/workingTimes", WorkingTimeController, only: [:update, :delete]
+    get "/workingTimes/:userID/:id", WorkingTimeController, :show
+    get "/workingTimes/:userID", WorkingTimeController, :index
+    post "/workingTimes/:userID", WorkingTimeController, :create
+    get "/clocks/:userID", ClockController, :show
+    post "/clocks/:userID", ClockController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
