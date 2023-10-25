@@ -19,7 +19,6 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   def show(conn, %{"userID" => userID}) do
-    # clocks = Repo.all(Clock, users: userID)
     query = from c in Clock,
                          where: c.users_id == ^userID
     clocks = Repo.all(query)
