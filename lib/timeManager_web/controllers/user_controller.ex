@@ -13,7 +13,7 @@ defmodule TimeManagerWeb.UserController do
       user = Repo.get_by!(User, email: email, username: username)
       render(conn, :show, user: user)
     rescue
-      e in Ecto.NoResultsError -> conn
+      Ecto.NoResultsError -> conn
                                   |> put_status(:bad_request)
                                   |> json(%{error: "email or username are invalid"})
     end
@@ -36,23 +36,40 @@ defmodule TimeManagerWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
-    render(conn, :show, user: user)
+    try do
+      user = Accounts.get_user!(id)
+      render(conn, :show, user: user)
+    rescue
+      Ecto.NoResultsError -> conn
+                                  |> put_status(:not_found)
+                                  |> json(%{error: "Ressource not found"})
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
-      render(conn, :show, user: user)
+    try do
+      user = Accounts.get_user!(id)
+      with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+        render(conn, :show, user: user)
+      end
+    rescue
+      Ecto.NoResultsError -> conn
+                                  |> put_status(:not_found)
+                                  |> json(%{error: "Ressource not found"})
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id)
+    try do
+      user = Accounts.get_user!(id)
 
-    with {:ok, %User{}} <- Accounts.delete_user(user) do
-      send_resp(conn, :no_content, "")
+      with {:ok, %User{}} <- Accounts.delete_user(user) do
+        send_resp(conn, :no_content, "")
+      end
+    rescue
+      Ecto.NoResultsError -> conn
+                                  |> put_status(:not_found)
+                                  |> json(%{error: "Ressource not found"})
     end
   end
 end

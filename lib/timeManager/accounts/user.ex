@@ -1,6 +1,5 @@
 defmodule TimeManager.Accounts.User do
-  alias TimeManager.Accounts.WorkingTime
-  alias TimeManager.Accounts.Clock
+  alias TimeManager.Accounts.{WorkingTime, Clock}
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -18,5 +17,7 @@ defmodule TimeManager.Accounts.User do
     user
     |> cast(attrs, [:username, :email])
     |> validate_required([:username, :email])
+    |> unique_constraint(:email)
+    |> validate_format(:email, ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   end
 end
