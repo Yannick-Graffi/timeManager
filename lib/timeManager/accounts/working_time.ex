@@ -6,7 +6,7 @@ defmodule TimeManager.Accounts.WorkingTime do
   schema "working_times" do
     field :start, :utc_datetime
     field :end, :utc_datetime
-    belongs_to :users, User
+    belongs_to :user, User
   end
 
   @doc false

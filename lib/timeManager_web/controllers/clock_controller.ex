@@ -11,14 +11,23 @@ defmodule TimeManagerWeb.ClockController do
 
   def create(conn, %{"userID" => userID}) do
     %User{} = user = Accounts.get_user!(userID)
+    clock = %{status: true, time: DateTime.truncate(DateTime.utc_now(), :second), user_id: userID}
 
     query = from c in Clock,
-                 where: c.users_id == ^userID,
+                 where: c.user_id == ^userID,
                  order_by: [desc: c.time],
                  limit: 1
     most_recent_clock = Repo.one(query)
 
-    with {:ok, %Clock{} = clock} <- Accounts.create_clock(%{status: !most_recent_clock.status, time: DateTime.truncate(DateTime.utc_now(), :second), users_id: userID}) do
+    clock =
+      if most_recent_clock do
+        new_clock = %{clock | status: !most_recent_clock.status}
+        new_clock
+      else
+        clock
+      end
+
+    with {:ok, %Clock{} = clock} <- Accounts.create_clock(clock) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/clocks/#{userID}")

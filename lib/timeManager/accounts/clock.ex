@@ -6,13 +6,13 @@ defmodule TimeManager.Accounts.Clock do
   schema "clocks" do
     field :status, :boolean, default: false
     field :time, :utc_datetime
-    belongs_to :users, User
+    belongs_to :user, User
   end
 
   @doc false
   def changeset(clock, attrs) do
     clock
-    |> cast(attrs, [:time, :status, :users_id])
+    |> cast(attrs, [:time, :status, :user_id])
     |> validate_required([:time, :status])
   end
 end
