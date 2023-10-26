@@ -4,6 +4,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   alias TimeManager.Accounts
   alias TimeManager.Accounts.WorkingTime
 
+
   action_fallback TimeManagerWeb.FallbackController
 
   def index(conn, _params) do
@@ -15,15 +16,25 @@ defmodule TimeManagerWeb.WorkingTimeController do
     with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/working_times/#{working_time}")
+      |> put_resp_header("location", ~p"/api/workingTimes/:userID")
       |> render(:show, working_time: working_time)
     end
   end
 
+
   def show(conn, %{"id" => id}) do
-    working_time = Accounts.get_working_time!(id)
-    render(conn, :show, working_time: working_time)
+
+    try do
+      working_time = Accounts.get_working_time!(id)
+      render(conn, :show, working_time: working_time)
+    rescue
+      Ecto.NoResultsError -> conn
+                                |> put_status(:bad_request)
+                                |> json(%{error: "please enter valid fields"})
+
+    end
   end
+
 
   def update(conn, %{"id" => id, "working_time" => working_time_params}) do
     working_time = Accounts.get_working_time!(id)
