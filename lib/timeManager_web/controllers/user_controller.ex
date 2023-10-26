@@ -41,7 +41,7 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :show, user: user)
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:bad_request)
+                                  |> put_status(:not_found)
                                   |> json(%{error: "Ressource not found"})
     end
   end
@@ -54,7 +54,7 @@ defmodule TimeManagerWeb.UserController do
       end
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:bad_request)
+                                  |> put_status(:not_found)
                                   |> json(%{error: "Ressource not found"})
     end
   end
@@ -68,7 +68,7 @@ defmodule TimeManagerWeb.UserController do
       end
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:bad_request)
+                                  |> put_status(:not_found)
                                   |> json(%{error: "Ressource not found"})
     end
   end
