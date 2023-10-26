@@ -3,7 +3,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
 
   alias TimeManager.Accounts
   alias TimeManager.Accounts.WorkingTime
-  alias TimeManager.Repo
 
 
   action_fallback TimeManagerWeb.FallbackController
@@ -17,10 +16,11 @@ defmodule TimeManagerWeb.WorkingTimeController do
     with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/working_times/#{working_time}")
+      |> put_resp_header("location", ~p"/api/workingTimes/:userID")
       |> render(:show, working_time: working_time)
     end
   end
+
 
   def show(conn, %{"id" => id}) do
 
