@@ -22,6 +22,14 @@ defmodule TimeManagerWeb.ClockController do
     query = from c in Clock,
                          where: c.users_id == ^userID
     clocks = Repo.all(query)
-    render(conn, :index, clocks: clocks)
+
+    case clocks do
+      [] ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Ressource not found"})
+      clocks_data ->
+        render(conn, :index, clocks: clocks_data)
+    end
   end
 end
