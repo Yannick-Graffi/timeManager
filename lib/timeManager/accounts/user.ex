@@ -17,7 +17,7 @@ defmodule TimeManager.Accounts.User do
     user
     |> cast(attrs, [:username, :email])
     |> validate_required([:username, :email])
-    |> unique_constraint(:email, name: :unique_email, message: "L'adresse e-mail est déjà utilisée.")
+    |> unique_constraint(:email, message: "The e-mail address is already in use")
     |> validate_format(:email, ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   end
 end
