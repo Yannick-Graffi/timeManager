@@ -13,7 +13,7 @@ defmodule TimeManagerWeb.UserController do
       user = Repo.get_by!(User, email: email, username: username)
       render(conn, :show, user: user)
     rescue
-      e in Ecto.NoResultsError -> conn
+      Ecto.NoResultsError -> conn
                                   |> put_status(:bad_request)
                                   |> json(%{error: "email or username are invalid"})
     end
