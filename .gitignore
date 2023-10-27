@@ -26,4 +26,4 @@ erl_crash.dump
 timeManager-*.tar
 
 /.idea/
-
+/mix.lock
