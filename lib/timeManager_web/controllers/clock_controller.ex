@@ -9,8 +9,15 @@ defmodule TimeManagerWeb.ClockController do
 
   action_fallback TimeManagerWeb.FallbackController
 
+  # POST /api/clocks/:userID
   def create(conn, %{"userID" => userID}) do
-    Accounts.get_user!(userID)
+
+    if !Accounts.get_user(userID) do
+      conn
+      |> put_status(:not_found)
+      |> json(%{error: "User not found"})
+    end
+
     clock = %{status: true, time: DateTime.truncate(DateTime.utc_now(), :second), user_id: userID}
 
     query = from c in Clock,
@@ -35,9 +42,10 @@ defmodule TimeManagerWeb.ClockController do
     end
   end
 
+  # GET /api/clocks/:userID
   def show(conn, %{"userID" => userID}) do
     query = from c in Clock,
-                         where: c.users_id == ^userID
+                         where: c.user_id == ^userID
     clocks = Repo.all(query)
 
     case clocks do
