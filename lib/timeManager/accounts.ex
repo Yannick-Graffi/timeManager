@@ -5,8 +5,8 @@ defmodule TimeManager.Accounts do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
-
   alias TimeManager.Accounts.User
+  alias TimeManager.Exceptions
 
   ############### User ################
   @doc """
@@ -167,6 +167,19 @@ defmodule TimeManager.Accounts do
   def get_clock!(id), do: Repo.get!(Clock, id)
 
   @doc """
+    Gets clocks by user.
+
+    Return list of clocks found by user.
+  """
+  def get_clocks_by_user(userID) do
+    query = from c in Clock,
+      where: c.user_id == ^userID
+
+      clocks = Repo.all(query)
+      clocks
+  end
+
+  @doc """
   Creates a clock.
 
   ## Examples
@@ -231,6 +244,37 @@ defmodule TimeManager.Accounts do
     Clock.changeset(clock, attrs)
   end
 
+  @doc """
+    Set and return clock.
+
+    Set new clock body.
+    Get most recent clock by user.
+    Set clock status depending on most recent clock found previously
+
+    ## Examples
+
+      iex> set_clock_status(123)
+      %Clock{}
+  """
+  def set_clock_status(userID) do
+    clock = %{status: true, time: DateTime.truncate(DateTime.utc_now(), :second), user_id: userID}
+
+    query = from c in Clock,
+                 where: c.user_id == ^userID,
+                 order_by: [desc: c.time],
+                 limit: 1
+    most_recent_clock = Repo.one(query)
+
+    clock =
+      if most_recent_clock do
+        new_clock = %{clock | status: !most_recent_clock.status}
+        new_clock
+      else
+        clock
+      end
+    clock
+  end
+
   ############### WorkingTime ################
   alias TimeManager.Accounts.WorkingTime
 
@@ -262,6 +306,40 @@ defmodule TimeManager.Accounts do
 
   """
   def get_working_time!(id), do: Repo.get!(WorkingTime, id)
+
+  @doc """
+  Gets all working_times by start, end and user.
+
+  Set a query request with condition for get only working times
+    between the dates (start, end) and with the userID associated.
+  Return a list of working times
+
+  ## Examples
+
+    iex> get_working_time!(123)
+    %WorkingTime{}
+
+    iex> get_working_time!(456)
+    ** (Ecto.NoResultsError)
+  """
+  def get_working_time_by_start_end_user(startDate, endDate, userID) do
+    query = from w in WorkingTime,
+       where: w.start >= ^startDate,
+       where: w.end <= ^endDate,
+       where: w.user_id == ^userID
+
+    working_times = Repo.all(query)
+  end
+
+  @doc """
+  Gets one working time by id and user.
+
+  Find working time by user associated and by id of working time
+
+  """
+  def get_working_time_by_id_and_user(id, userID) do
+    working_time = Repo.get_by!(WorkingTime, id: id, user_id: userID)
+  end
 
   @doc """
   Creates a working_time.

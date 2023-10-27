@@ -3,7 +3,6 @@ defmodule TimeManagerWeb.UserController do
 
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
-  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -15,7 +14,7 @@ defmodule TimeManagerWeb.UserController do
     rescue
       Ecto.NoResultsError -> conn
       |> put_status(:not_found)
-      |> json(%{error: "Ressource not found"})
+      |> json(%{error: "Resource not found"})
     end
   end
 
@@ -27,8 +26,8 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :show, user: user)
     rescue
       Ecto.NoResultsError -> conn
-       |> put_status(:bad_request)
-       |> json(%{error: "Email or username are invalid"})
+       |> put_status(:not_found)
+       |> json(%{error: "Resource not found"})
     end
   end
 
@@ -53,7 +52,7 @@ defmodule TimeManagerWeb.UserController do
   def update(conn, %{"id" => id, "user" => user_params}) do
     try do
       user = Accounts.get_user!(id)
-      
+
       with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
         render(conn, :show, user: user)
       end

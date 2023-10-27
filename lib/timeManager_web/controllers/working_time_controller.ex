@@ -5,31 +5,24 @@ defmodule TimeManagerWeb.WorkingTimeController do
 
   alias TimeManager.Accounts
   alias TimeManager.Accounts.WorkingTime
-  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
   # GET ALL /workingTimes/:userID?start=&end=
   def index(conn, %{"start" => paramsStart, "end" => paramsEnd, "userID" => userID}) do
-
-    if !Accounts.get_user(userID) do
-      conn
-      |> put_status(:bad_request)
-      |> json(%{error: "User not found"})
-    end
-
     try do
-      query = from w in WorkingTime,
-        where: w.start >= ^paramsStart,
-        where: w.end <= ^paramsEnd,
-        where: w.user_id == ^userID
+      Accounts.get_user!(userID)
+      working_times = Accounts.get_working_time_by_start_end_user(paramsStart, paramsEnd, userID)
 
-      working_times = Repo.all(query)
       render(conn, :index, working_times: working_times)
     rescue
       Ecto.Query.CastError -> conn
       |> put_status(:bad_request)
       |> json(%{error: "Invalid date format"})
+
+      Ecto.NoResultsError -> conn
+      |> put_status(:not_found)
+      |> json(%{error: "User not found"})
     end
   end
 
@@ -38,22 +31,17 @@ defmodule TimeManagerWeb.WorkingTimeController do
     conn
     |> put_status(:bad_request)
     |> json(%{error: "Parameters start and end are required"})
-
-    # working_times = Accounts.list_working_times()
-    # render(conn, :index, working_times: working_times)
   end
 
   # GET ONE /workingTimes/:userID/:id
   def show(conn, %{"userID" => userID, "id" => id}) do
-
-    working_time = Repo.get_by(WorkingTime, id: id, user_id: userID)
-    case working_time do
-      nil ->
-        conn
-        |> put_status(:not_found)
-        |> json(%{error: "Resource or user not found"})
-      _ ->
-        render(conn, :show, working_time: working_time)
+    try do
+      working_time = Accounts.get_working_time_by_id_and_user(id, userID)
+      render(conn, :show, working_time: working_time)
+    rescue
+      Ecto.NoResultsError -> conn
+      |> put_status(:not_found)
+      |> json(%{error: "Resource or user not found"})
     end
   end
 
