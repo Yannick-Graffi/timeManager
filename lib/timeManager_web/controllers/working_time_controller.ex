@@ -12,6 +12,12 @@ defmodule TimeManagerWeb.WorkingTimeController do
   # GET ALL /workingTimes/:userID?start=&end=
   def index(conn, %{"start" => paramsStart, "end" => paramsEnd, "userID" => userID}) do
 
+    if !Accounts.get_user(userID) do
+      conn
+      |> put_status(:bad_request)
+      |> json(%{error: "User not found"})
+    end
+
     try do
       query = from w in WorkingTime,
         where: w.start >= ^paramsStart,
@@ -23,7 +29,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
     rescue
       Ecto.Query.CastError -> conn
       |> put_status(:bad_request)
-      |> json(%{error: "Invalid user id or invalid date format"})
+      |> json(%{error: "Invalid date format"})
     end
   end
 
@@ -31,7 +37,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   def index(conn, _params) do
     conn
     |> put_status(:bad_request)
-    |> json(%{error: "start and end parameters are required"})
+    |> json(%{error: "Parameters start and end are required"})
 
     # working_times = Accounts.list_working_times()
     # render(conn, :index, working_times: working_times)
@@ -45,7 +51,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
       nil ->
         conn
         |> put_status(:not_found)
-        |> json(%{error: "Ressource not found"})
+        |> json(%{error: "Resource or user not found"})
       _ ->
         render(conn, :show, working_time: working_time)
     end
@@ -54,30 +60,53 @@ defmodule TimeManagerWeb.WorkingTimeController do
   # POST /workingTimes
   def create(conn, %{"working_time" => working_time_params, "userID" => userID}) do
     working_time_params_with_user_id = Map.put(working_time_params, "user_id", userID)
-    
-    with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params_with_user_id) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/workingTimes/:userID")
-      |> render(:show, working_time: working_time)
+
+    try do
+      with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params_with_user_id) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/workingTimes/:userID")
+        |> render(:show, working_time: working_time)
+      end
+    rescue
+      Ecto.ConstraintError -> conn
+      |> put_status(:bad_request)
+      |> json(%{error: "User not found"})
     end
   end
 
   # PUT /workingTimes/:id
   def update(conn, %{"id" => id, "working_time" => working_time_params}) do
-    working_time = Accounts.get_working_time!(id)
 
-    with {:ok, %WorkingTime{} = working_time} <- Accounts.update_working_time(working_time, working_time_params) do
-      render(conn, :show, working_time: working_time)
+    try do
+      working_time = Accounts.get_working_time!(id)
+
+      with {:ok, %WorkingTime{} = working_time} <- Accounts.update_working_time(working_time, working_time_params) do
+        render(conn, :show, working_time: working_time)
+      end
+    rescue
+      Ecto.NoResultsError -> conn
+      |> put_status(:not_found)
+      |> json(%{error: "Resource not found"})
+
+      Ecto.ConstraintError -> conn
+      |> put_status(:bad_request)
+      |> json(%{error: "User not found"})
     end
   end
 
   # DELETE /workingTimes/:id
   def delete(conn, %{"id" => id}) do
-    working_time = Accounts.get_working_time!(id)
+    try do
+      working_time = Accounts.get_working_time!(id)
 
-    with {:ok, %WorkingTime{}} <- Accounts.delete_working_time(working_time) do
-      send_resp(conn, :no_content, "")
+      with {:ok, %WorkingTime{}} <- Accounts.delete_working_time(working_time) do
+        send_resp(conn, :no_content, "")
+      end
+    rescue
+      Ecto.NoResultsError -> conn
+      |> put_status(:not_found)
+      |> json(%{error: "Resource not found"})
     end
   end
 end
