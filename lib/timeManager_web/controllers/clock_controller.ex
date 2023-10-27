@@ -4,13 +4,13 @@ defmodule TimeManagerWeb.ClockController do
   import Ecto.Query
 
   alias TimeManager.Accounts
-  alias TimeManager.Accounts.{Clock, User}
+  alias TimeManager.Accounts.Clock
   alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
   def create(conn, %{"userID" => userID}) do
-    %User{} = user = Accounts.get_user!(userID)
+    Accounts.get_user!(userID)
     clock = %{status: true, time: DateTime.truncate(DateTime.utc_now(), :second), user_id: userID}
 
     query = from c in Clock,
