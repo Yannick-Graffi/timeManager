@@ -8,6 +8,7 @@ defmodule TimeManager.Accounts do
 
   alias TimeManager.Accounts.User
 
+  ############### User ################
   @doc """
   Returns the list of users.
 
@@ -37,7 +38,36 @@ defmodule TimeManager.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  @doc """
+  Gets a single user.
+
+  Raises nil if the User does not exist.
+
+  ## Examples
+
+      iex> get_user(123)
+      %User{}
+
+      iex> get_user(456)
+      ** nil
+  """
   def get_user(id), do: Repo.get(User, id)
+
+  @doc """
+  Get a single user by email and username.
+
+  Raises `Ecto.NoResultsError` if the User does not exist.
+
+   ## Examples
+
+      iex> get_user_by_email_and_username(123)
+      %User{}
+
+      iex> get_user_by_email_and_username(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_user_by_email_and_username(email, username), do:
+  Repo.get_by!(User, email: email, username: username)
 
   @doc """
   Creates a user.
@@ -104,6 +134,7 @@ defmodule TimeManager.Accounts do
     User.changeset(user, attrs)
   end
 
+  ############### Clock ################
   alias TimeManager.Accounts.Clock
 
   @doc """
@@ -200,6 +231,7 @@ defmodule TimeManager.Accounts do
     Clock.changeset(clock, attrs)
   end
 
+  ############### WorkingTime ################
   alias TimeManager.Accounts.WorkingTime
 
   @doc """

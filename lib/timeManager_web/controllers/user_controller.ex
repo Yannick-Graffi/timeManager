@@ -7,25 +7,39 @@ defmodule TimeManagerWeb.UserController do
 
   action_fallback TimeManagerWeb.FallbackController
 
-  def index(conn, %{"email" => email, "username" => username}) do
-
+  # GET ONE /users/:id
+  def show(conn, %{"id" => id}) do
     try do
-      user = Repo.get_by!(User, email: email, username: username)
+      user = Accounts.get_user!(id)
       render(conn, :show, user: user)
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:bad_request)
-                                  |> json(%{error: "email or username are invalid"})
+      |> put_status(:not_found)
+      |> json(%{error: "Ressource not found"})
     end
   end
 
+  # GET ONE /users?email=&username=
+  def index(conn, %{"email" => email, "username" => username}) do
+
+    try do
+      user = Accounts.get_user_by_email_and_username(email, username)
+      render(conn, :show, user: user)
+    rescue
+      Ecto.NoResultsError -> conn
+       |> put_status(:bad_request)
+       |> json(%{error: "Email or username are invalid"})
+    end
+  end
+
+  # GET ONE /users
   def index(conn, _params) do
     conn
     |> put_status(:bad_request)
-    |> json(%{error: "email and username parameters are required"})
+    |> json(%{error: "Email and username parameters are required"})
   end
 
-
+  # POST /users
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params) do
       conn
@@ -35,30 +49,22 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    try do
-      user = Accounts.get_user!(id)
-      render(conn, :show, user: user)
-    rescue
-      Ecto.NoResultsError -> conn
-                                  |> put_status(:not_found)
-                                  |> json(%{error: "Ressource not found"})
-    end
-  end
-
+  # PUT /users/:id
   def update(conn, %{"id" => id, "user" => user_params}) do
     try do
       user = Accounts.get_user!(id)
+      
       with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
         render(conn, :show, user: user)
       end
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:not_found)
-                                  |> json(%{error: "Ressource not found"})
+      |> put_status(:not_found)
+      |> json(%{error: "Ressource not found"})
     end
   end
 
+  # DELETE /users/:id
   def delete(conn, %{"id" => id}) do
     try do
       user = Accounts.get_user!(id)
@@ -68,8 +74,8 @@ defmodule TimeManagerWeb.UserController do
       end
     rescue
       Ecto.NoResultsError -> conn
-                                  |> put_status(:not_found)
-                                  |> json(%{error: "Ressource not found"})
+      |> put_status(:not_found)
+      |> json(%{error: "Ressource not found"})
     end
   end
 end
