@@ -43,6 +43,19 @@ config :timeManager, TimeManager.Guardian,
        issuer: "timeManager",
        secret_key: "t8a03V4THs8SEo7yiFg4D2isyzfy3EYG7UzxP/am9GUV9fzttmhcohFR8OKwiTvn"
 
+# Swagger
+config :timeManager, :phoenix_swagger,
+       swagger_files: %{
+         "priv/static/swagger.json" => [
+           router: TimeManagerWeb.Router,
+           endpoint: TimeManagerWeb.Endpoint
+         ]
+       }
+
+# Jason (a JSON library)
+config :phoenix_swagger, json_library: Jason
+
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
