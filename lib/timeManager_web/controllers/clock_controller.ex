@@ -1,8 +1,6 @@
 defmodule TimeManagerWeb.ClockController do
   use TimeManagerWeb, :controller
 
-  import Ecto.Query
-
   alias TimeManager.Accounts
   alias TimeManager.Accounts.Clock
 
@@ -18,7 +16,7 @@ defmodule TimeManagerWeb.ClockController do
         conn
         |> put_status(:not_found)
         |> json(%{error: "Resource not found"})
-      clocks_data ->
+      _clocks_data ->
          render(conn, :index, clocks: clocks)
     end
   end

@@ -6,9 +6,25 @@ defmodule TimeManager.Accounts do
   import Ecto.Query, warn: false
   alias TimeManager.Repo
   alias TimeManager.Accounts.User
-  alias TimeManager.Exceptions
+  alias TimeManager.Guardian
 
   ############### User ################
+
+  def authenticate(email, password) do
+    user = Repo.get_by(User, email: email)
+    cond do
+      user && Bcrypt.verify_pass(password, user.password_hash) -> {:ok, user}
+      true -> :error
+    end
+  end
+
+  def generate_token(user) do
+    # Vous pouvez ajouter des claims supplémentaires ici si nécessaire.
+    #claims = %{aud: "YourApp", exp: DateTime.add(DateTime.utc_now(), 3600, :second)}
+    { :ok, token, _claims } = Guardian.encode_and_sign(user)
+    token
+  end
+
   @doc """
   Returns the list of users.
 
@@ -328,7 +344,7 @@ defmodule TimeManager.Accounts do
        where: w.end <= ^endDate,
        where: w.user_id == ^userID
 
-    working_times = Repo.all(query)
+    Repo.all(query)
   end
 
   @doc """
@@ -338,7 +354,7 @@ defmodule TimeManager.Accounts do
 
   """
   def get_working_time_by_id_and_user(id, userID) do
-    working_time = Repo.get_by!(WorkingTime, id: id, user_id: userID)
+    Repo.get_by!(WorkingTime, id: id, user_id: userID)
   end
 
   @doc """
