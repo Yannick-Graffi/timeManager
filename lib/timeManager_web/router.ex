@@ -17,40 +17,10 @@ defmodule TimeManagerWeb.Router do
     post "/clocks/:userID", ClockController, :create
   end
 
-  scope "/api/swagger" do
+  scope "/api/doc" do
     forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :timeManager, swagger_file: "swagger.json"
   end
-
-  def swagger_info do
-    %{
-      schemes: ["http", "https", "ws", "wss"],
-      info: %{
-        version: "1.0",
-        title: "MyAAZPI",
-        description: "API Documentation for MyAPI v1",
-        termsOfService: "Open for public",
-        contact: %{
-          name: "Vladimir Gorej",
-          email: "vladimir.gore@gmail.com"
-        }
-      },
-      securityDefinitions: %{
-        Bearer: %{
-          type: "apiKey",
-          name: "Authorization",
-          description:
-            "API Token must be provided via `Authorization: Bearer ` header",
-          in: "header"
-        }
-      },
-      consumes: ["application/json"],
-      produces: ["application/json"],
-      tags: [
-        %{name: "Users", description: "User resources"},
-      ]
-    }
-  end
-
+  
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:timeManager, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put
