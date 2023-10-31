@@ -1,8 +1,6 @@
 defmodule TimeManagerWeb.WorkingTimeController do
   use TimeManagerWeb, :controller
 
-  import Ecto.Query
-
   alias TimeManager.Accounts
   alias TimeManager.Accounts.WorkingTime
 

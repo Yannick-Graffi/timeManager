@@ -10,7 +10,7 @@ defmodule TimeManager.MixProject do
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers ++ [:phoenix_swagger],
+      compilers: Mix.compilers ++ [:phoenix_swagger],
     ]
   end
 
