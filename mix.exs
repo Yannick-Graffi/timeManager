@@ -50,6 +50,7 @@ defmodule TimeManager.MixProject do
       {:guardian, "~> 2.0"},
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
+      {:cors_plug, "~> 3.0"},
     ]
   end
 
