@@ -48,9 +48,9 @@ defmodule TimeManager.MixProject do
       {:plug_cowboy, "~> 2.5"},
       {:bcrypt_elixir, "~> 3.0"},
       {:guardian, "~> 2.3"},
-      {:jose, "~> 1.8"},
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
+      {:cors_plug, "~> 3.0"},
       {:guardian_db, "~> 3.0"}
     ]
   end
