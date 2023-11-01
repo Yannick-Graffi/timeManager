@@ -47,9 +47,11 @@ defmodule TimeManager.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:plug_cowboy, "~> 2.5"},
       {:bcrypt_elixir, "~> 3.0"},
-      {:guardian, "~> 2.0"},
+      {:guardian, "~> 2.3"},
+      {:jose, "~> 1.8"},
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
+      {:guardian_db, "~> 3.0"}
     ]
   end
 
