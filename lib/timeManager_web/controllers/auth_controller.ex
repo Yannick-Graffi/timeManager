@@ -1,11 +1,11 @@
 defmodule TimeManagerWeb.AuthController do
   use TimeManagerWeb, :controller
-  alias TimeManager.{Accounts, Accounts.User}
+  alias TimeManager.Accounts
   alias TimeManager.Auth.Guardian
 
   # Endpoint pour se connecter
   def login(conn, %{"email" => email, "password" => password}) do
-    case TimeManager.Auth.Guardian.authenticate(email, password) do
+    case Guardian.authenticate(email, password) do
       {:ok, user, token} ->
         json(conn, %{token: token, user: user})
       {:error, :unauthorized} ->
@@ -33,8 +33,8 @@ defmodule TimeManagerWeb.AuthController do
   # Endpoint pour se déconnecter
   def logout(conn, _params) do
     # Récupérez le claims et le token à partir de la connexion
-    token = TimeManager.Auth.Guardian.Plug.current_token(conn)
-    with {:ok, _claims} <- TimeManager.Auth.Guardian.revoke(token) do
+    token = Guardian.Plug.current_token(conn)
+    with {:ok, _claims} <- Guardian.revoke(token) do
       json(conn, %{message: "Logged out successfully."})
     else
       {:error, reason} ->
