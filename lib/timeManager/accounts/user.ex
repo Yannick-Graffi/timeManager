@@ -1,18 +1,18 @@
 defmodule TimeManager.Accounts.User do
-  alias TimeManager.Accounts.{WorkingTime, Clock}
+  alias TimeManager.Accounts.{WorkingTime, Clock, Team, UserRole}
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [ :username, :email]}
+  @derive {Jason.Encoder, only: [:username, :email, :role, :team_id]}
   schema "users" do
     field :username, :string
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
-    field :roles, Ecto.Enum, values: [:admin, :general_manager, :manager, :employee]
+    field :role, UserRole
     has_many :clocks, Clock
     has_many :working_times, WorkingTime
-    belongs_to :user, User
+    belongs_to :team_id, Team
 
     timestamps(type: :utc_datetime)
   end
