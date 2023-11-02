@@ -6,8 +6,8 @@ defmodule TimeManagerWeb.AuthController do
   # Endpoint pour se connecter
   def login(conn, %{"email" => email, "password" => password}) do
     case TimeManager.Auth.Guardian.authenticate(email, password) do
-      {:ok, _user, token} ->
-        json(conn, %{token: token})
+      {:ok, user, token} ->
+        json(conn, %{token: token, user: user})
       {:error, :unauthorized} ->
         conn
         |> put_status(:unauthorized)
@@ -17,12 +17,15 @@ defmodule TimeManagerWeb.AuthController do
 
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
-         {:ok, _token, _claims} <- Guardian.encode_and_sign(user) do
+    with {:ok, _user} <- Accounts.create_user(user_params) do
       conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/users/#{user}")
-      |> render(:show, user: user)
+      |> put_status(:ok)
+      |> json(%{message: "Successful registration."})
+    else
+      {:error, changeset} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(TimeManager.ChangesetError.render_errors(changeset))
     end
   end
 

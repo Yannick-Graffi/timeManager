@@ -3,6 +3,7 @@ defmodule TimeManager.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @derive {Jason.Encoder, only: [ :username, :email]}
   schema "users" do
     field :username, :string
     field :email, :string
@@ -18,7 +19,9 @@ defmodule TimeManager.Accounts.User do
   def changeset(user, attrs) do
     user
     |> cast(attrs, [:username, :email, :password])
-    |> validate_required([:username, :email, :password])
+    |> validate_required(:username, message: "Username cannot be blank.")
+    |> validate_required(:email, message: "Email cannot be blank.")
+    |> validate_required(:password, message: "Password cannot be blank.")
     |> unique_constraint(:email, message: "The e-mail address is already in use")
     |> validate_format(:email, ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     |> put_password_hash()
