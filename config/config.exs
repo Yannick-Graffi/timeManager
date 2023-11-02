@@ -51,8 +51,13 @@ config :guardian, Guardian.DB,
 
 # Swagger
 config :timeManager, :phoenix_swagger,
+       swagger_ui_path: "/api/swagger",
+       generate_swagger_file: false,
+       hide_generated_tag: true,
+       hide_default_endpoint: true,
+       hide_auth_header: true,
        swagger_files: %{
-         "priv/static/swagger.json" => [
+         "priv/static/swaggerDefault.json" => [
            router: TimeManagerWeb.Router,
            endpoint: TimeManagerWeb.Endpoint
          ]

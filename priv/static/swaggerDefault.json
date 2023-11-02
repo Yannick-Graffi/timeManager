@@ -1,0 +1,10 @@
+{
+  "info": {
+    "version": "0.0.1",
+    "title": "<enter your title>"
+  },
+  "host": "localhost:4000",
+  "definitions": {},
+  "paths": {},
+  "swagger": "2.0"
+}
