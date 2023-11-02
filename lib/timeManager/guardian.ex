@@ -24,7 +24,7 @@ defmodule TimeManager.Auth.Guardian do
 
   def authenticate(email, password) do
     case Accounts.get_user_by_email(email) do
-      nil -> {:error, :unauthored}
+      nil -> {:error, :unauthorized}
       user ->
         case validate_password(password, user.password_hash) do
           true -> create_token(user)
