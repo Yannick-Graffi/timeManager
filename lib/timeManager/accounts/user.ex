@@ -9,8 +9,10 @@ defmodule TimeManager.Accounts.User do
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
+    field :roles, Ecto.Enum, values: [:admin, :general_manager, :manager, :employee]
     has_many :clocks, Clock
     has_many :working_times, WorkingTime
+    belongs_to :user, User
 
     timestamps(type: :utc_datetime)
   end
