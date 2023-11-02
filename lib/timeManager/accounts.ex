@@ -6,23 +6,26 @@ defmodule TimeManager.Accounts do
   import Ecto.Query, warn: false
   alias TimeManager.Repo
   alias TimeManager.Accounts.User
-  alias TimeManager.Guardian
 
   ############### User ################
 
-  def authenticate(email, password) do
-    user = Repo.get_by(User, email: email)
-    cond do
-      user && Bcrypt.verify_pass(password, user.password_hash) -> {:ok, user}
-      true -> :error
-    end
-  end
+  @doc """
+  Gets a single user.any()
 
-  def generate_token(user) do
-    # Vous pouvez ajouter des claims supplémentaires ici si nécessaire.
-    #claims = %{aud: "YourApp", exp: DateTime.add(DateTime.utc_now(), 3600, :second)}
-    { :ok, token, _claims } = Guardian.encode_and_sign(user)
-    token
+  Returns 'nil' if the User does not exist.
+
+  ## Examples
+
+    iex> get_user_by_email(test@email.com)
+    %Account{}
+
+    iex> get_user_by_email(no_account@email.com)
+    nil
+  """
+  def get_user_by_email(email) do
+    User
+    |> where(email: ^email)
+    |> Repo.one()
   end
 
   @doc """

@@ -39,9 +39,15 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :timeManager, TimeManager.Guardian,
+config :timeManager, TimeManager.Auth.Guardian,
        issuer: "timeManager",
-       secret_key: "t8a03V4THs8SEo7yiFg4D2isyzfy3EYG7UzxP/am9GUV9fzttmhcohFR8OKwiTvn"
+       secret_key: "8tX3py93FH2Y1Q2K+Rs6tZHo/7eQ7kHTFJX5F/kH3tARp9I5/uZfaZzgzzuuswpa",
+       verify_module: Guardian.DB
+
+config :guardian, Guardian.DB,
+       repo: TimeManager.Repo, # Add your repository module
+       schema_name: "guardian_tokens", # default
+       sweep_interval: 60 # default: 60 minutes
 
 # Swagger
 config :timeManager, :phoenix_swagger,

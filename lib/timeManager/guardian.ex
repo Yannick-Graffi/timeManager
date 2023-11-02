@@ -1,16 +1,64 @@
-defmodule TimeManager.Guardian do
+defmodule TimeManager.Auth.Guardian do
   use Guardian, otp_app: :timeManager
+  alias TimeManager.Accounts
 
-  def subject_for_token(resource, _claims) do
-    # Ici, vous retournez la clé unique identifiant l'utilisateur, par exemple l'ID de l'utilisateur.
-    sub = to_string(resource.id)
+  def subject_for_token(%{id: id}, _claims) do
+    sub = to_string(id)
     {:ok, sub}
   end
 
-  def resource_from_claims(claims) do
-    # Ici, vous trouvez l'utilisateur en fonction du `sub` qui a été codé dans le token.
-    id = claims["sub"]
-    resource = TimeManager.Accounts.get_user(id)
-    {:ok, resource}
+  def subject_for_token(_, _) do
+    {:error, :no_id_provided}
   end
+
+  def resource_from_claims(%{"sub" => id}) do
+    case Accounts.get_user!(id) do
+      nil -> {:error, :not_found}
+      resource -> {:ok, resource}
+    end
+  end
+
+  def resource_from_claims(_claims) do
+    {:error, :no_id_provided}
+  end
+
+  def authenticate(email, password) do
+    case Accounts.get_user_by_email(email) do
+      nil -> {:error, :unauthored}
+      user ->
+        case validate_password(password, user.password_hash) do
+          true -> create_token(user)
+          false -> {:error, :unauthorized}
+        end
+
+    end
+  end
+
+  defp validate_password(password, hash_password) do
+    Bcrypt.verify_pass(password, hash_password)
+  end
+
+  defp create_token(user) do
+    {:ok, token, _claims} = encode_and_sign(user)
+    {:ok, user, token}
+  end
+
+  def after_encode_and_sign(resource, claims, token, _options) do
+    with {:ok, _} <- Guardian.DB.after_encode_and_sign(resource, claims["typ"], claims, token) do
+      {:ok, token}
+    end
+  end
+
+  def on_verify(claims, token, _options) do
+    with {:ok, _} <- Guardian.DB.on_verify(claims, token) do
+      {:ok, claims}
+    end
+  end
+
+  def on_revoke(claims, token, _options) do
+    with {:ok, _} <- Guardian.DB.on_revoke(claims, token) do
+      {:ok, claims}
+    end
+  end
+
 end
