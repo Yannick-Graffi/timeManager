@@ -19,7 +19,7 @@ defmodule TimeManager.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:username, :email, :password])
+    |> cast(attrs, [:username, :email, :password, :role])
     |> validate_required(:username, message: "Username cannot be blank.")
     |> validate_required(:email, message: "Email cannot be blank.")
     |> validate_required(:password, message: "Password cannot be blank.")
