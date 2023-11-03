@@ -42,11 +42,10 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
-  # GET ONE /users
+  # GET ALL /users
   def index(conn, _params) do
-    conn
-    |> put_status(:bad_request)
-    |> json(%{error: "Email and username parameters are required"})
+    users = Accounts.list_users()
+    render(conn, :index, users: users)
   end
 
   # POST /users
