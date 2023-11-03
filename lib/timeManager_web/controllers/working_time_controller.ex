@@ -65,9 +65,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   def update(conn, %{"id" => id, "working_time" => working_time_params}) do
 
     try do
-      working_time = Accounts.get_working_time!(id)
-
-      with {:ok, %WorkingTime{} = working_time} <- Accounts.update_working_time(working_time, working_time_params) do
+      with {:ok, %WorkingTime{} = working_time} <- Accounts.update_working_time(id, working_time_params) do
         render(conn, :show, working_time: working_time)
       end
     rescue
@@ -84,9 +82,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   # DELETE /workingTimes/:id
   def delete(conn, %{"id" => id}) do
     try do
-      working_time = Accounts.get_working_time!(id)
-
-      with {:ok, %WorkingTime{}} <- Accounts.delete_working_time(working_time) do
+      with {:ok, %WorkingTime{}} <- Accounts.delete_working_time(id) do
         send_resp(conn, :no_content, "")
       end
     rescue

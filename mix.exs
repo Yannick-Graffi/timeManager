@@ -51,8 +51,7 @@ defmodule TimeManager.MixProject do
       {:phoenix_swagger, "~> 0.8"},
       {:ex_json_schema, "~> 0.5"},
       {:cors_plug, "~> 3.0"},
-      {:guardian_db, "~> 3.0"},
-      {:ecto_enum, "~> 1.4"}
+      {:guardian_db, "~> 3.0"}
     ]
   end
 

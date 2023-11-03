@@ -24,6 +24,7 @@ defmodule TimeManagerWeb.Router do
     get "/users/me", UserController, :me
     resources "/users", UserController, except: [:new, :edit]
     resources "/workingTimes", WorkingTimeController, only: [:update, :delete]
+    resources "/teams", TeamController, except: [:new, :edit]
     get "/workingTimes/:userID/:id", WorkingTimeController, :show
     get "/workingTimes/:userID", WorkingTimeController, :index
     post "/workingTimes/:userID", WorkingTimeController, :create

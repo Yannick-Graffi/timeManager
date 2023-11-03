@@ -62,9 +62,7 @@ defmodule TimeManagerWeb.UserController do
   # PUT /users/:id
   def update(conn, %{"id" => id, "user" => user_params}) do
     try do
-      user = Accounts.get_user!(id)
-
-      with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+      with {:ok, %User{} = user} <- Accounts.update_user(id, user_params) do
         render(conn, :show, user: user)
       end
     rescue

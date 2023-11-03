@@ -111,14 +111,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> update_user(user, %{field: new_value})
+      iex> update_user(id, %{field: new_value})
       {:ok, %User{}}
 
-      iex> update_user(user, %{field: bad_value})
+      iex> update_user(id, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user(%User{} = user, attrs) do
+  def update_user(id, attrs) do
+    user = get_user!(id)
     user
     |> User.changeset(attrs)
     |> Repo.update()
@@ -129,14 +130,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> delete_user(user)
+      iex> delete_user(id)
       {:ok, %User{}}
 
-      iex> delete_user(user)
+      iex> delete_user(id)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_user(%User{} = user) do
+  def delete_user(id) do
+    user = get_user!(id)
     Repo.delete(user)
   end
 
@@ -221,14 +223,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> update_clock(clock, %{field: new_value})
+      iex> update_clock(id, %{field: new_value})
       {:ok, %Clock{}}
 
-      iex> update_clock(clock, %{field: bad_value})
+      iex> update_clock(id, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_clock(%Clock{} = clock, attrs) do
+  def update_clock(id, attrs) do
+    clock = get_clock!(id)
     clock
     |> Clock.changeset(attrs)
     |> Repo.update()
@@ -239,14 +242,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> delete_clock(clock)
+      iex> delete_clock(id)
       {:ok, %Clock{}}
 
-      iex> delete_clock(clock)
+      iex> delete_clock(id)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_clock(%Clock{} = clock) do
+  def delete_clock(id) do
+    clock = get_clock!(id)
     Repo.delete(clock)
   end
 
@@ -383,14 +387,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> update_working_time(working_time, %{field: new_value})
+      iex> update_working_time(id, %{field: new_value})
       {:ok, %WorkingTime{}}
 
-      iex> update_working_time(working_time, %{field: bad_value})
+      iex> update_working_time(id, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_working_time(%WorkingTime{} = working_time, attrs) do
+  def update_working_time(id, attrs) do
+    working_time = get_working_time!(id)
     working_time
     |> WorkingTime.changeset(attrs)
     |> Repo.update()
@@ -401,14 +406,15 @@ defmodule TimeManager.Accounts do
 
   ## Examples
 
-      iex> delete_working_time(working_time)
+      iex> delete_working_time(id)
       {:ok, %WorkingTime{}}
 
-      iex> delete_working_time(working_time)
+      iex> delete_working_time(id)
       {:error, %Ecto.Changeset{}}
 
   """
-  def delete_working_time(%WorkingTime{} = working_time) do
+  def delete_working_time(id) do
+    working_time = get_working_time!(id)
     Repo.delete(working_time)
   end
 
@@ -423,5 +429,91 @@ defmodule TimeManager.Accounts do
   """
   def change_working_time(%WorkingTime{} = working_time, attrs \\ %{}) do
     WorkingTime.changeset(working_time, attrs)
+  end
+
+  ############### Team ################
+  alias TimeManager.Accounts.Team
+
+  @doc """
+  Returns the list of teams.
+
+  ## Examples
+
+      iex> list_team()
+      [%Team{}, ...]
+
+  """
+  def list_team do
+    Repo.all(Team)
+  end
+
+  @doc """
+  Gets a single team.
+
+  Raises `Ecto.NoResultsError` if the Team does not exist.
+
+  ## Examples
+
+      iex> get_team!(123)
+      %User{}
+
+      iex> get_team!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_team!(id), do: Repo.get!(Team, id)
+
+  @doc """
+  Creates a team.
+
+  ## Examples
+
+      iex> create_team(%{field: value})
+      {:ok, %Team{}}
+
+      iex> create_team(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_team(attrs \\ %{}) do
+    %Team{}
+    |> Team.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a team.
+
+  ## Examples
+
+      iex> update_team(id, %{field: new_value})
+      {:ok, %Team{}}
+
+      iex> update_team(id, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_team(id, attrs) do
+    team = get_team!(id)
+    team
+    |> Team.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a team.
+
+  ## Examples
+
+      iex> delete_team(id)
+      {:ok, %Team{}}
+
+      iex> delete_team(id)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_team(id) do
+    team = get_team!(id)
+    Repo.delete(team)
   end
 end

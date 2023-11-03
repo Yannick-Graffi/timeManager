@@ -6,6 +6,8 @@ defmodule TimeManager.Accounts.Team do
   schema "teams" do
     field :name, :string
     belongs_to :manager, User
+
+    timestamps(type: :utc_datetime)
   end
 
   @doc false
