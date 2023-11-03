@@ -24,19 +24,20 @@ defmodule TimeManagerWeb.ClockController do
   # POST /clocks/:userID
   def create(conn, %{"userID" => userID}) do
 
-    if !Accounts.get_user(userID) do
-      conn
-      |> put_status(:not_found)
-      |> json(%{error: "User not found"})
-    end
+    try do
+      Accounts.get_user!(userID)
+      clock = Accounts.set_clock_status(userID)
 
-    clock = Accounts.set_clock_status(userID)
-
-    with {:ok, %Clock{} = clock} <- Accounts.create_clock(clock) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/clocks/#{userID}")
-      |> render(:show, clock: clock)
+      with {:ok, %Clock{} = clock} <- Accounts.create_clock(clock) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/clocks/#{userID}")
+        |> render(:show, clock: clock)
+      end
+    rescue
+      Ecto.NoResultsError -> conn
+       |> put_status(:not_found)
+       |> json(%{error: "User not found"})
     end
   end
 end
