@@ -6,6 +6,17 @@ defmodule TimeManagerWeb.UserController do
 
   action_fallback TimeManagerWeb.FallbackController
 
+  def me(conn, _params) do
+    try do
+      user = Guardian.Plug.current_resource(conn)
+      render(conn, :show, user: user)
+    rescue
+      Ecto.NoResultsError -> conn
+                             |> put_status(:not_found)
+                             |> json(%{error: "Resource not found"})
+    end
+  end
+
   # GET ONE /users/:id
   def show(conn, %{"id" => id}) do
     try do
