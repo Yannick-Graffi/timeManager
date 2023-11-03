@@ -1,6 +1,5 @@
 defmodule TimeManager.ChangesetError do
-
-  # Cette fonction prend un changeset et retourne une structure de données JSON.
+  # Cette fonction prend un changeset et retourne une erreur sous la forme spécifiée.
   def render_errors(changeset) do
     errors = Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
       Enum.reduce(opts, msg, fn {key, value}, acc ->
@@ -8,12 +7,14 @@ defmodule TimeManager.ChangesetError do
       end)
     end)
 
-    formatted_errors = Enum.map(errors, fn {_field, messages} ->
-      %{
-        error: Enum.join(messages, ", ")
-      }
-    end)
+    # Trouve la première erreur et la formate.
+    formatted_error = errors
+                      |> Enum.map(fn {_field, messages} -> Enum.join(messages, ", ") end)
+                      |> List.first()
 
-    %{errors: formatted_errors}
+    # Retourne uniquement la première erreur trouvée, ou une erreur par défaut si aucune n'est trouvée.
+    %{
+      error: formatted_error || "Une erreur inattendue est survenue."
+    }
   end
 end
