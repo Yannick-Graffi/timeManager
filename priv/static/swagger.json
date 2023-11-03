@@ -13,15 +13,22 @@
     "https"
   ],
   "securityDefinitions": {
-    "Bearer": {
-      "in": "header",
-      "name": "Authorization",
+    "JWT": {
       "type": "apiKey",
-      "description": "API Token must be provided via `Authorization: Bearer ` header"
+      "in": "header",
+      "name": "Authorization"
     }
   },
+  "security": [
+    {
+      "JWT": []
+    }
+  ],
   "tags": [
     {
+      "name": "auth",
+      "description": "Register / Login / Logout"
+    }, {
       "name": "users",
       "description": "User resources"
     }, {
@@ -33,11 +40,105 @@
     }
   ],
   "paths": {
+    "/register": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Register a user",
+        "description": "Register a user (employee) with email, username and password",
+        "operationId": "register",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "UserInformations",
+            "in": "body",
+            "description": "Informations of the new user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string",
+                  "example": "Example"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "example@mail.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "a!+pz5efU9?z8g2^:3L"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          }, "400": {
+            "description": "Bad request"
+          }, "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Login a user",
+        "description": "Login a user with credentials",
+        "operationId": "login",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "UserCredentials",
+            "in": "body",
+            "description": "Credentials of the new user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "molestie2.sodales@hotmail.couk"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "azerty"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          }, "400": {
+            "description": "Bad request"
+          }, "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/logout": {
+      "post": {
+        "tags": ["auth"],
+        "summary": "Logout a user",
+        "description": "Logout a user",
+        "operationId": "logout",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "Successful"
+          }, "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/users/{userID}": {
       "get": {
-        "tags": [
-          "users"
-        ],
+        "tags": ["users"],
         "summary": "Get one user by ID",
         "description": "",
         "operationId": "getUserById",
