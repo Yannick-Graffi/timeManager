@@ -1,13 +1,13 @@
 defmodule TimeManager.Accounts.UserTeam do
-  alias TimeManager.Accounts.{WorkingTime, Clock, Team, UserRole}
+  alias TimeManager.Accounts.{Team, User}
   use Ecto.Schema
   import Ecto.Changeset
 
   @primary_key false
   @derive {Jason.Encoder, only: [:user, :team]}
   schema "users_teams" do
-    belongs_to(:user, User, primary_key: true)
-    belongs_to(:team, Team, primary_key: true)
+    belongs_to :user, User, primary_key: true
+    belongs_to :team, Team, primary_key: true
 
     timestamps()
   end
@@ -22,7 +22,7 @@ defmodule TimeManager.Accounts.UserTeam do
     |> foreign_key_constraint(:user_id)
     |> unique_constraint([:user, :team],
          name: :user_id_team_id_unique_index,
-         message: @already_exists
+         message: "Already exist"
        )
   end
 end
