@@ -23,6 +23,7 @@ defmodule TimeManagerWeb.Router do
     post "/logout", AuthController, :logout
     resources "/users", UserController, except: [:new, :edit]
     resources "/workingTimes", WorkingTimeController, only: [:update, :delete]
+    resources "/teams", TeamController, except: [:new, :edit]
     get "/workingTimes/:userID/:id", WorkingTimeController, :show
     get "/workingTimes/:userID", WorkingTimeController, :index
     post "/workingTimes/:userID", WorkingTimeController, :create
