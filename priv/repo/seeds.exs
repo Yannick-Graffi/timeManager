@@ -21,7 +21,7 @@ alias TimeManager.Accounts.User
 
 # Liste des utilisateurs à ajouter
 users = [
-  %{username: "john_doe", email: "johna@example.com", password: "123456", role: :employee},
+  %{username: "john_doe1", email: "johna@example.com", password: "123456", role: :employee},
   %{username: "john_doe", email: "john@example.com", password: "123456", role: :employee},
   %{username: "jane_smith", email: "jane@example.com", password: "abcdef", role: :employee},
   %{username: "bob_jones", email: "bob@example.com", password: "securepassword", role: :employee},
