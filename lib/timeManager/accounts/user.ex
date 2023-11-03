@@ -1,18 +1,17 @@
 defmodule TimeManager.Accounts.User do
-  alias TimeManager.Accounts.{WorkingTime, Clock, Team, UserRole}
+  alias TimeManager.Accounts.{WorkingTime, Clock, UserRole}
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:username, :email, :role, :team_id]}
+  @derive {Jason.Encoder, only: [:username, :email, :role]}
   schema "users" do
     field :username, :string
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
-    field :role, UserRole
+    field :role, UserRole, default: :employee
     has_many :clocks, Clock
     has_many :working_times, WorkingTime
-    belongs_to :team_id, Team
 
     timestamps(type: :utc_datetime)
   end
@@ -24,6 +23,7 @@ defmodule TimeManager.Accounts.User do
     |> validate_required(:username, message: "Username cannot be blank.")
     |> validate_required(:email, message: "Email cannot be blank.")
     |> validate_required(:password, message: "Password cannot be blank.")
+    |> validate_required(:role, message: "Role cannot be blank.")
     |> unique_constraint(:email, message: "The e-mail address is already in use")
     |> validate_format(:email, ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     |> put_password_hash()

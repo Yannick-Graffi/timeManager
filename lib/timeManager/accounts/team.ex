@@ -6,7 +6,6 @@ defmodule TimeManager.Accounts.Team do
   schema "teams" do
     field :name, :string
     belongs_to :manager, User
-    has_many :users, User
   end
 
   @doc false

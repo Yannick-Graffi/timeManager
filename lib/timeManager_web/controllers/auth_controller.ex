@@ -16,8 +16,8 @@ defmodule TimeManagerWeb.AuthController do
   end
 
 
-  def create(conn, %{"user" => user_params}) do
-    with {:ok, _user} <- Accounts.create_user(user_params) do
+  def create(conn, %{"email" => email, "password" => password, "username" => username}) do
+    with {:ok, _user} <- Accounts.create_user(%{"email" => email, "password" => password, "username" => username}) do
       conn
       |> put_status(:ok)
       |> json(%{message: "Successful registration."})
