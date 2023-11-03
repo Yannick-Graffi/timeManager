@@ -21,6 +21,7 @@ defmodule TimeManagerWeb.Router do
     pipe_through [:api, :auth]
 
     post "/logout", AuthController, :logout
+    get "/users/me", UserController, :me
     resources "/users", UserController, except: [:new, :edit]
     resources "/workingTimes", WorkingTimeController, only: [:update, :delete]
     get "/workingTimes/:userID/:id", WorkingTimeController, :show

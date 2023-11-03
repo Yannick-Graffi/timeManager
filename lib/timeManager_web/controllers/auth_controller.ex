@@ -11,7 +11,7 @@ defmodule TimeManagerWeb.AuthController do
       {:error, :unauthorized} ->
         conn
         |> put_status(:unauthorized)
-        |> json(%{error: "Invalid credentials"})
+        |> json(%{ error: "Invalid credentials" })
     end
   end
 
@@ -24,7 +24,7 @@ defmodule TimeManagerWeb.AuthController do
     else
       {:error, changeset} ->
         conn
-        |> put_status(:unauthorized)
+        |> put_status(:bad_request)
         |> json(TimeManager.ChangesetError.render_errors(changeset))
     end
   end
