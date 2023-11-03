@@ -16,7 +16,7 @@ services:
       - "4000:4000"
     depends_on:
       - db
-    command: bash -c "mix deps.get && mix ecto.reset && mix phx.server"
+    command: bash -c "mix deps.get && mix ecto.drop --force && mix ecto.setup && mix phx.server"
 
   db:
     image: postgres:13
