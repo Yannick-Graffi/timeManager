@@ -98,21 +98,21 @@ Enum.each(workingTimes, fn working_time_attrs ->
 end)
 
 ################## Insert USER TEAM ##################
-userTeams = [
-  %{user_id: "1", team_id: "1"},
-  %{user_id: "2", team_id: "2"},
-  %{user_id: "3", team_id: "3"},
-  %{user_id: "4", team_id: "4"},
-  %{user_id: "5", team_id: "5"},
-]
-
-Enum.each(userTeams, fn user_team_attrs ->
-  user_team_changeset = UserTeam.changeset(%UserTeam{}, user_team_attrs)
-
-  case Repo.insert(user_team_changeset) do
-    {:ok, userTeam} ->
-      IO.puts("Created user team")
-    {:error, changeset} ->
-      IO.puts("Error creating user team: #{changeset.errors |> Enum.map(fn {k, v} -> "#{k}: #{elem(v, 1)}" end) |> Enum.join(", ")}")
-  end
-end)
+#userTeams = [
+#  %{user_id: "1", team_id: "1"},
+#  %{user_id: "2", team_id: "2"},
+#  %{user_id: "3", team_id: "3"},
+#  %{user_id: "4", team_id: "4"},
+#  %{user_id: "5", team_id: "5"},
+#]
+#
+#Enum.each(userTeams, fn user_team_attrs ->
+#  user_team_changeset = UserTeam.changeset(%UserTeam{}, user_team_attrs)
+#
+#  case Repo.insert(user_team_changeset) do
+#    {:ok, userTeam} ->
+#      IO.puts("Created user team")
+#    {:error, changeset} ->
+#      IO.puts("Error creating user team: #{changeset.errors |> Enum.map(fn {k, v} -> "#{k}: #{elem(v, 1)}" end) |> Enum.join(", ")}")
+#  end
+#end)
