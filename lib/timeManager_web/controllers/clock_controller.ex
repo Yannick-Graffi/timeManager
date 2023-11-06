@@ -21,18 +21,19 @@ defmodule TimeManagerWeb.ClockController do
     end
   end
 
-  # POST /clocks/:userID
-  def create(conn, %{"userID" => userID}) do
+  # POST /clocks
+  def create(conn, _params) do
+    user = Guardian.Plug.current_resource(conn)
 
     try do
-      Accounts.get_user!(userID)
-      clock = Accounts.set_clock_status(userID)
+      Accounts.get_user!(user.id)
+      clock = Accounts.set_clock_status(user.id)
 
       with {:ok, %Clock{} = clock} <- Accounts.create_clock(clock) do
         conn
         |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/clocks/#{userID}")
-        |> render(:show, clock: clock)
+        |> put_resp_header("location", ~p"/api/clocks/#{user.id}")
+        |> json(%{clock: clock})
       end
     rescue
       Ecto.NoResultsError -> conn

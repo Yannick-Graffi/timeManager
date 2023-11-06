@@ -29,7 +29,7 @@ defmodule TimeManagerWeb.Router do
     get "/workingTimes/:userID", WorkingTimeController, :index
     post "/workingTimes/:userID", WorkingTimeController, :create
     get "/clocks/:userID", ClockController, :show
-    post "/clocks/:userID", ClockController, :create
+    post "/clocks", ClockController, :create
   end
 
   scope "/api/doc" do

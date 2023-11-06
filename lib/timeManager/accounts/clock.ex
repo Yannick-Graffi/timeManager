@@ -3,6 +3,7 @@ defmodule TimeManager.Accounts.Clock do
   import Ecto.Changeset
   alias TimeManager.Accounts.User
 
+  @derive {Jason.Encoder, only: [:status, :time]}
   schema "clocks" do
     field :status, :boolean, default: false
     field :time, :utc_datetime
