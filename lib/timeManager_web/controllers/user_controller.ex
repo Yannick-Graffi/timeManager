@@ -1,6 +1,5 @@
 defmodule TimeManagerWeb.UserController do
   use TimeManagerWeb, :controller
-  import Ecto.Query
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
   alias TimeManager.Repo
@@ -22,7 +21,6 @@ defmodule TimeManagerWeb.UserController do
   def show(conn, %{"id" => id}) do
 
       user = Accounts.get_user!(id)
-      user_with_teams = Repo.preload(user, :teams)
 
       case user do
         nil ->

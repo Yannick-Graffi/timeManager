@@ -14,7 +14,8 @@
 # Repo.delete_all(User)
 
 alias TimeManager.Repo
-alias TimeManager.Accounts.{User, Team, Clock, WorkingTime, UserTeam}
+alias TimeManager.Accounts.{User, Team, Clock, WorkingTime}
+import Ecto.Query
 
 ################## Insert USER ##################
 users = [
@@ -98,21 +99,32 @@ Enum.each(workingTimes, fn working_time_attrs ->
 end)
 
 ################## Insert USER TEAM ##################
-#userTeams = [
-#  %{user_id: "1", team_id: "1"},
-#  %{user_id: "2", team_id: "2"},
-#  %{user_id: "3", team_id: "3"},
-#  %{user_id: "4", team_id: "4"},
-#  %{user_id: "5", team_id: "5"},
-#]
-#
-#Enum.each(userTeams, fn user_team_attrs ->
-#  user_team_changeset = UserTeam.changeset(%UserTeam{}, user_team_attrs)
-#
-#  case Repo.insert(user_team_changeset) do
-#    {:ok, userTeam} ->
-#      IO.puts("Created user team")
-#    {:error, changeset} ->
-#      IO.puts("Error creating user team: #{changeset.errors |> Enum.map(fn {k, v} -> "#{k}: #{elem(v, 1)}" end) |> Enum.join(", ")}")
-#  end
-#end)
+
+# priv/repo/seeds.exs
+
+alias TimeManager.Repo
+alias TimeManager.Accounts.{User, Team}
+
+# ... le reste de votre code ...
+
+# Fetch some users and teams by their id or other attributes
+team_1 = Repo.get!(Team, 1) # replace with actual team id
+
+# Preload the users association on the team
+team_1 = Repo.preload(team_1, :users)
+
+# Assuming you have a list of user IDs that you want to add to the team
+user_ids = [2, 3, 4] # replace with actual user ids
+users = Repo.all(from u in User, where: u.id in ^user_ids)
+
+# Associate users with a team using preloaded users
+team_changeset = Ecto.Changeset.change(team_1)
+                 |> Ecto.Changeset.put_assoc(:users, users)
+
+# Save the changes
+case Repo.update(team_changeset) do
+  {:ok, _team} ->
+    IO.puts("Users have been added to the team")
+  {:error, changeset} ->
+    IO.puts("Error adding users to the team: #{changeset}")
+end
