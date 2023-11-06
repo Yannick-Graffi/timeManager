@@ -31,6 +31,19 @@ defmodule TimeManagerWeb.WorkingTimeController do
     |> json(%{error: "Parameters start and end are required"})
   end
 
+  def today(conn, _params) do
+    user = Guardian.Plug.current_resource(conn)
+    date_today = Date.utc_today()
+    time_midnight = Time.new!(0, 0, 0, 0)
+    {:ok, midnight_today} = DateTime.new(date_today, time_midnight)
+    date_tomorrow = Date.add(date_today, 1)
+    {:ok, midnight_tomorrow} = DateTime.new(date_tomorrow, time_midnight)
+    dbg(midnight_today)
+    dbg(midnight_tomorrow)
+    working_times = Accounts.get_working_time_by_start_end_user(midnight_today, midnight_tomorrow, user.id)
+    render(conn, :index, working_times: working_times)
+  end
+
   # GET ONE /workingTimes/:userID/:id
   def show(conn, %{"userID" => userID, "id" => id}) do
     try do
