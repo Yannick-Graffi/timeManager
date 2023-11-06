@@ -73,6 +73,28 @@ defmodule TimeManager.Accounts do
   def get_user(id), do: Repo.get(User, id)
 
   @doc """
+  Gets a single user.
+
+  Raises nil if the User does not exist.
+
+  ## Examples
+
+      iex> get_user(123)
+      %User{}
+
+      iex> get_user(456)
+      ** nil
+  """
+  def get_user_teams(id) do
+    query = from u in User,
+                 where: u.id == ^id,
+                 preload: [:teams]
+    user_with_teams = Repo.one(query)
+
+    dbg(user_with_teams)
+  end
+
+  @doc """
   Get a single user by email and username.
 
   Raises `Ecto.NoResultsError` if the User does not exist.

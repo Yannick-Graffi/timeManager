@@ -1,8 +1,9 @@
 defmodule TimeManagerWeb.UserController do
   use TimeManagerWeb, :controller
-
+  import Ecto.Query
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
+  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -19,14 +20,22 @@ defmodule TimeManagerWeb.UserController do
 
   # GET ONE /users/:id
   def show(conn, %{"id" => id}) do
-    try do
+
       user = Accounts.get_user!(id)
-      render(conn, :show, user: user)
-    rescue
-      Ecto.NoResultsError -> conn
-      |> put_status(:not_found)
-      |> json(%{error: "Resource not found"})
-    end
+      user_with_teams = Repo.preload(user, :teams)
+
+      case user do
+        nil ->
+          conn
+          |> put_status(:not_found)
+          |> json(%{error: "Resource not found"})
+        user ->
+          user_with_teams = Repo.preload(user, :teams)
+          render(conn, :show, user: user_with_teams)
+      end
+
+
+
   end
 
   # GET ONE /users?email=&username=

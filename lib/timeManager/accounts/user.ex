@@ -1,5 +1,5 @@
 defmodule TimeManager.Accounts.User do
-  alias TimeManager.Accounts.{WorkingTime, Clock, UserRole}
+  alias TimeManager.Accounts.{WorkingTime, Clock, UserRole, Team}
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -12,6 +12,7 @@ defmodule TimeManager.Accounts.User do
     field :role, UserRole, default: :employee
     has_many :clocks, Clock
     has_many :working_times, WorkingTime
+    many_to_many :teams, Team, join_through: "users_teams"
 
     timestamps(type: :utc_datetime)
   end
