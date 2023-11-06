@@ -8,8 +8,21 @@ defmodule TimeManagerWeb.TeamController do
 
   # GET ALL /teams
   def index(conn, _params) do
-      teams = Accounts.list_team()
-      render(conn, :index, teams: teams)
+    current_user = Guardian.Plug.current_resource(conn)
+    case Accounts.get_teams_based_on_role(current_user) do
+      {:ok, teams} ->
+        render(conn, :index, teams: teams)
+
+      {:error, :unauthorized} ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Unauthorized access"})
+
+      {:error, _reason} ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Internal server error"})
+    end
   end
 
   # GET ONE /teams/:id

@@ -5,7 +5,7 @@ defmodule TimeManager.Accounts do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
-  alias TimeManager.Accounts.User
+  alias TimeManager.Accounts.{User, Team}
 
   ############### User ################
 
@@ -484,6 +484,28 @@ defmodule TimeManager.Accounts do
 
   """
   def get_team!(id), do: Repo.get!(Team, id)
+
+  def get_teams_based_on_role(%User{} = current_user) do
+    case current_user.role do
+      :admin ->
+        {:ok, Repo.all(Team)}
+
+      :general_manager ->
+        {:ok, Repo.all(Team)}
+
+      :manager ->
+        # Récupérer toutes les équipes gérées par le manager courant
+        teams = Repo.all(
+          from t in Team,
+          where: t.manager_id == ^current_user.id,
+          preload: [users: :teams]
+        )
+        {:ok, teams}
+
+      _ ->
+        {:error, :unauthorized}
+    end
+  end
 
   @doc """
   Creates a team.
