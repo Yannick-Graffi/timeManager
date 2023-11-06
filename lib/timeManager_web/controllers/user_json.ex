@@ -15,7 +15,20 @@ defmodule TimeManagerWeb.UserJSON do
     %{data: data(user)}
   end
 
+  def show_with_teams(%{user: user}) do
+    %{data: data_with_teams(user)}
+  end
+
   defp data(%User{} = user) do
+    %{
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role
+    }
+  end
+
+  defp data_with_teams(%User{} = user) do
     %{
       id: user.id,
       username: user.username,

@@ -31,11 +31,8 @@ defmodule TimeManagerWeb.UserController do
           |> json(%{error: "Resource not found"})
         user ->
           user_with_teams = Repo.preload(user, :teams)
-          render(conn, :show, user: user_with_teams)
+          render(conn, :show_with_teams, user: user_with_teams)
       end
-
-
-
   end
 
   # GET ONE /users?email=&username=
