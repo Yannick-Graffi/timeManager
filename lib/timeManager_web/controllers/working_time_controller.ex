@@ -38,8 +38,6 @@ defmodule TimeManagerWeb.WorkingTimeController do
     {:ok, midnight_today} = DateTime.new(date_today, time_midnight)
     date_tomorrow = Date.add(date_today, 1)
     {:ok, midnight_tomorrow} = DateTime.new(date_tomorrow, time_midnight)
-    dbg(midnight_today)
-    dbg(midnight_tomorrow)
     working_times = Accounts.get_working_time_by_start_end_user(midnight_today, midnight_tomorrow, user.id)
     render(conn, :index, working_times: working_times)
   end
@@ -59,13 +57,11 @@ defmodule TimeManagerWeb.WorkingTimeController do
   # POST /workingTimes
   def create(conn, %{"working_time" => working_time_params, "userID" => userID}) do
     working_time_params_with_user_id = Map.put(working_time_params, "user_id", userID)
-
     try do
       with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params_with_user_id) do
         conn
         |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/workingTimes/:userID")
-        |> render(:show, working_time: working_time)
+        |> json(%{message: "Working Time created successfully."})
       end
     rescue
       Ecto.ConstraintError -> conn
