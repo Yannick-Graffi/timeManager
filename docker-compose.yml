@@ -16,10 +16,10 @@ services:
       - "4000:4000"
     depends_on:
       - db
-    command: bash -c "mix deps.get && mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"
+    command: sh -c "mix deps.get && mix deps.clean --all && mix deps.get && mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"
 
   db:
-    image: postgres:13
+    image: postgres:13-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
