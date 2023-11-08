@@ -27,6 +27,10 @@ defmodule TimeManager.Accounts.User do
     |> validate_required(:role, message: "Role cannot be blank.")
     |> unique_constraint(:email, message: "The e-mail address is already in use")
     |> validate_format(:email, ~r/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+    |> validate_length(:password, min: 12, message: "Password must be at least 12 characters long.")
+    |> validate_format(:password, ~r/[A-Z]/, message: "Password must contain at least one uppercase letter.")
+    |> validate_format(:password, ~r/[a-z]/, message: "Password must contain at least one lowercase letter.")
+    |> validate_format(:password, ~r/[^\w\s]/, message: "Password must contain at least one special character.")
     |> put_password_hash()
   end
 
