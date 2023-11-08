@@ -31,6 +31,7 @@ defmodule TimeManager.Accounts.User do
     |> validate_format(:password, ~r/[A-Z]/, message: "Password must contain at least one uppercase letter.")
     |> validate_format(:password, ~r/[a-z]/, message: "Password must contain at least one lowercase letter.")
     |> validate_format(:password, ~r/[^\w\s]/, message: "Password must contain at least one special character.")
+    |> validate_format(:password, ~r/\d/, message: "Password must contain at least one digit.")
     |> put_password_hash()
   end
 
