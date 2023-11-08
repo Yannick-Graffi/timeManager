@@ -488,10 +488,16 @@ defmodule TimeManager.Accounts do
   def get_teams_based_on_role(%User{} = current_user) do
     case current_user.role do
       :admin ->
-        {:ok, Repo.all(Team)}
+        {:ok, Repo.all(
+          from t in Team,
+          preload: [users: :teams]
+        )}
 
       :general_manager ->
-        {:ok, Repo.all(Team)}
+        {:ok, Repo.all(
+          from t in Team,
+          preload: [users: :teams]
+        )}
 
       :manager ->
         # Récupérer toutes les équipes gérées par le manager courant
