@@ -7,6 +7,12 @@ defmodule TimeManagerWeb.AuthController do
   def login(conn, %{"email" => email, "password" => password}) do
     case Guardian.authenticate(email, password) do
       {:ok, user, token} ->
+        #json(conn, %{token: token, user: user, message: "Login successfully"})
+        #{:ok, _old, {new_token, _new_claims}} = Guardian.refresh(token)
+        #dbg(new_token)
+        #conn
+        #|> put_resp_cookie("guardian_default_token", token, http_only: true)
+        #|> json(%{ user: user})
         json(conn, %{token: token, user: user, message: "Login successfully"})
       {:error, :unauthorized} ->
         conn

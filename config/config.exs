@@ -49,6 +49,11 @@ config :guardian, Guardian.DB,
        schema_name: "guardian_tokens", # default
        sweep_interval: 60 # default: 60 minutes
 
+#config :cors_plug,
+#       origin: ["http://localhost:5173"],
+#       max_age: 86400,
+#       methods: ["GET", "POST"]
+
 # Swagger
 config :timeManager, :phoenix_swagger,
        swagger_ui_path: "/api/swagger",

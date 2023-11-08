@@ -58,7 +58,7 @@ defmodule TimeManagerWeb.WorkingTimeController do
   def create(conn, %{"working_time" => working_time_params, "userID" => userID}) do
     working_time_params_with_user_id = Map.put(working_time_params, "user_id", userID)
     try do
-      with {:ok, %WorkingTime{} = working_time} <- Accounts.create_working_time(working_time_params_with_user_id) do
+      with {:ok, _working_time} <- Accounts.create_working_time(working_time_params_with_user_id) do
         conn
         |> put_status(:created)
         |> json(%{message: "Working Time created successfully."})
