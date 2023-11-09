@@ -11,7 +11,7 @@ services:
     env_file:
       - .env
     ports:
-      - "4000:4000"
+      - "4001:4001"
     depends_on:
       - db
     command: sh -c "mix deps.get && mix deps.clean --all && mix deps.get && mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"

@@ -21,7 +21,7 @@ config :timeManager, TimeManagerWeb.Endpoint,
   ],
   pubsub_server: TimeManager.PubSub,
   live_view: [signing_salt: "kWhpoIAj"],
-  http: [port: 4000],  # HTTP disabled
+  # http: [port: 4000],  # HTTP disabled
   https: [            # HTTPS enabled
     port: 4001,
     cipher_suite: :strong,
