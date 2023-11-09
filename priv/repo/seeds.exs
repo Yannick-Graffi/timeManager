@@ -19,12 +19,12 @@ import Ecto.Query
 
 ################## Insert USER ##################
 users = [
-  %{username: "john_doe1", email: "johna@example.com", password: "azerty", role: :employee},
-  %{username: "john_doe", email: "john@example.com", password: "azerty", role: :employee},
-  %{username: "jane_smith", email: "jane@example.com", password: "azerty", role: :employee},
-  %{username: "bob_jones", email: "bob@example.com", password: "azerty", role: :manager},
-  %{username: "alice_brown", email: "alice@example.com", password: "azerty", role: :manager},
-  %{username: "jane_doe", email: "jane2@example.com", password: "azerty", role: :general_manager},
+  %{username: "john_doe1", email: "johna@example.com", password: "Azerty123456.", role: :employee},
+  %{username: "john_doe", email: "john@example.com", password: "Azerty123456.", role: :employee},
+  %{username: "jane_smith", email: "jane@example.com", password: "Azerty123456.", role: :employee},
+  %{username: "bob_jones", email: "bob@example.com", password: "Azerty123456.", role: :manager},
+  %{username: "alice_brown", email: "alice@example.com", password: "Azerty123456.", role: :manager},
+  %{username: "jane_doe", email: "jane2@example.com", password: "Azerty123456.", role: :general_manager},
 ]
 
 Enum.each(users, fn user_attrs ->
