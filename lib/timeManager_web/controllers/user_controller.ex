@@ -71,8 +71,8 @@ defmodule TimeManagerWeb.UserController do
 
       # Check if ID correspond to connected user id
       if String.to_integer(id) == connectedUser.id do
-        if user_params["oldPassword"] do
-          case Guardian.validate_password(user_params["oldPassword"], connectedUser.password_hash) do
+        if user_params["currentPassword"] do
+          case Guardian.validate_password(user_params["currentPassword"], connectedUser.password_hash) do
             false -> # Password doesn't match
               conn
               |> put_status(:unauthorized)
