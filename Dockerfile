@@ -14,16 +14,9 @@ WORKDIR /app
 
 # Copier les dépendances de l'application Elixir
 COPY mix.exs mix.lock ./
-RUN mix do deps.get, deps.compile
 
 # Copier tout le reste de l'application
 COPY . .
-
-# Compiler l'application
-RUN mix do compile
-
-# Si la compilation échoue pour les dépendances, réinstaller toutes les dépendances
-RUN mix do deps.clean --all && mix do deps.get, deps.compile
 
 # Exposer le port utilisé par Phoenix
 EXPOSE 4000
