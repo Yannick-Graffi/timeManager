@@ -5,6 +5,10 @@
   },
   "host": "localhost:4000",
   "definitions": {},
+  "schemes": [
+    "https",
+    "http"
+  ],
   "paths": {},
   "swagger": "2.0"
 }
