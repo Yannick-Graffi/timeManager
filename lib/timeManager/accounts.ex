@@ -650,6 +650,7 @@ defmodule TimeManager.Accounts do
       {daily_avg, weekly_avg} = calculate_averages(users)
 
       average_user = %User{
+        id: 0,
         username: "AVERAGE",
         email: "",
         daily: daily_avg,
