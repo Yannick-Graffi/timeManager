@@ -73,7 +73,7 @@ defmodule TimeManagerWeb.UserController do
       if String.to_integer(id) == connectedUser.id do
         if user_params["currentPassword"] do
           case Guardian.validate_password(user_params["currentPassword"], connectedUser.password_hash) do
-            false -> # Password doesn't match
+            false ->
               conn
               |> put_status(:unauthorized)
               |> json(%{error: "Incorrect password"})
@@ -82,13 +82,13 @@ defmodule TimeManagerWeb.UserController do
                 render(conn, :show, user: user)
               end
           end
-        else
-          modified_user_params = Map.put(user_params, "password", nil)
-
-          dbg(modified_user_params)
-          with {:ok, %User{} = user} <- Accounts.update_user(id, modified_user_params) do
-            render(conn, :show, user: user)
-          end
+#        else
+#          modified_user_params = Map.put(user_params, "password", nil)
+#
+#          dbg(modified_user_params)
+#          with {:ok, %User{} = user} <- Accounts.update_user(id, modified_user_params) do
+#            render(conn, :show, user: user)
+#          end
         end
       else
         conn
@@ -106,11 +106,23 @@ defmodule TimeManagerWeb.UserController do
   # DELETE /users/:id
   def delete(conn, %{"id" => id}) do
     try do
-      user = Accounts.get_user!(id)
+      connectedUser = Guardian.Plug.current_resource(conn)
 
-      with {:ok, %User{}} <- Accounts.delete_user(user) do
-        send_resp(conn, :no_content, "")
+      dbg("--------------------")
+      dbg(connectedUser.role)
+      dbg("admin")
+      dbg("--------------------")
+
+      if connectedUser.role == :admin or String.to_integer(id) == connectedUser.id do
+         with {:ok, %User{}} <- Accounts.delete_user(id) do
+           send_resp(conn, :no_content, "")
+         end
+      else
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "Access denied"})
       end
+
     rescue
       Ecto.NoResultsError -> conn
       |> put_status(:not_found)
