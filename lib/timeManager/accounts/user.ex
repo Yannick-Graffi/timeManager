@@ -3,7 +3,7 @@ defmodule TimeManager.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :username, :email, :role]}
+  @derive {Jason.Encoder, only: [:id, :username, :email, :role, :daily, :weekly]}
   schema "users" do
     field :username, :string
     field :email, :string
@@ -13,6 +13,8 @@ defmodule TimeManager.Accounts.User do
     has_many :clocks, Clock
     has_many :working_times, WorkingTime
     many_to_many :teams, Team, join_through: "users_teams"
+    field :daily, :string, virtual: true
+    field :weekly, :string, virtual: true
 
     timestamps(type: :utc_datetime)
   end

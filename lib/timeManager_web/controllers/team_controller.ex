@@ -11,7 +11,10 @@ defmodule TimeManagerWeb.TeamController do
     current_user = Guardian.Plug.current_resource(conn)
     case Accounts.get_teams_based_on_role(current_user) do
       {:ok, teams} ->
-        render(conn, :index, teams: teams)
+        updated_teams = Accounts.add_daily_working_hours(teams)
+        updated_teams = Accounts.add_weekly_working_hours(updated_teams)
+        updated_teams = Accounts.add_daily_and_weekly_averages(updated_teams)
+        render(conn, :index, teams: updated_teams)
 
       {:error, :unauthorized} ->
         conn
