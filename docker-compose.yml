@@ -5,11 +5,12 @@ services:
     build: .
     volumes:
       - .:/app
+      - deps:/app/deps  # Montage du volume pour les dépendances
     working_dir: /app
     environment:
-      - POSTGRES_USER= ${POSTGRES_USER}
-      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
-      - POSTGRES_DB= ${POSTGRES_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - "4001:4001"
     depends_on:
@@ -19,13 +20,15 @@ services:
   db:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_USER= ${POSTGRES_USER}
-      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
-      - POSTGRES_DB= ${POSTGRES_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
 volumes:
   postgres_data:
+  deps:  # Déclaration du volume pour les dépendances Elixir
