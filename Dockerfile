@@ -12,18 +12,14 @@ RUN apk update && \
 # Créer un répertoire pour votre application
 WORKDIR /app
 
-# Copier les dépendances de l'application Elixir
+# Copier les fichiers mix.exs et mix.lock pour installer les dépendances
 COPY mix.exs mix.lock ./
-RUN mix do deps.get, deps.compile
 
 # Copier tout le reste de l'application
 COPY . .
 
-# Compiler l'application
-RUN mix do compile
-
-# Si la compilation échoue pour les dépendances, réinstaller toutes les dépendances
-RUN mix do deps.clean --all && mix do deps.get, deps.compile
+# Installer et compiler les dépendances, puis compiler l'application
+RUN mix do deps.get, deps.compile, compile
 
 # Exposer le port utilisé par Phoenix
 EXPOSE 4001
