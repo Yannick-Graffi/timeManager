@@ -90,7 +90,11 @@ defmodule TimeManagerWeb.UserController do
 #            render(conn, :show, user: user)
 #          end
         end
-      else
+      else if connectedUser.role == :manager do
+             with {:ok, %User{} = user} <- Accounts.update_user(id, user_params) do
+               render(conn, :show, user: user)
+             end
+      end
         conn
         |> put_status(:unauthorized)
         |> json(%{error: "User doesn't match"})
