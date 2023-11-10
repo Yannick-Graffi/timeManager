@@ -8,6 +8,7 @@ defmodule TimeManager.Accounts.User do
     field :username, :string
     field :email, :string
     field :password, :string, virtual: true
+    field :current_password, :string, virtual: true
     field :password_hash, :string
     field :role, UserRole, default: :employee
     has_many :clocks, Clock

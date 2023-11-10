@@ -27,3 +27,5 @@ timeManager-*.tar
 
 /.idea/
 /mix.lock
+
+/.env

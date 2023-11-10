@@ -20,7 +20,14 @@ config :timeManager, TimeManagerWeb.Endpoint,
     layout: false
   ],
   pubsub_server: TimeManager.PubSub,
-  live_view: [signing_salt: "kWhpoIAj"]
+  live_view: [signing_salt: "kWhpoIAj"],
+  # http: [port: 4000],  # HTTP disabled
+  https: [            # HTTPS enabled
+    port: 4001,
+    cipher_suite: :strong,
+    keyfile: "priv/cert/selfsigned_key.pem",  # Replace with your certificate key file
+    certfile: "priv/cert/selfsigned.pem"      # Replace with your certificate file
+  ]
 
 # Configures the mailer
 #

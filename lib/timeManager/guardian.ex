@@ -41,7 +41,7 @@ defmodule TimeManager.Auth.Guardian do
   end
 
   # Function to validate a password by checking it against its hashed value.
-  defp validate_password(password, hash_password) do
+  def validate_password(password, hash_password) do
     Bcrypt.verify_pass(password, hash_password)
   end
 

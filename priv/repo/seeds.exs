@@ -25,6 +25,7 @@ users = [
   %{username: "bob_jones", email: "bob@example.com", password: "Azerty123456.", role: :manager},
   %{username: "alice_brown", email: "alice@example.com", password: "Azerty123456.", role: :manager},
   %{username: "jane_doe", email: "jane2@example.com", password: "Azerty123456.", role: :general_manager},
+  %{username: "admin2", email: "admin@example.com", password: "Azerty123456.", role: :admin},
 ]
 
 Enum.each(users, fn user_attrs ->
@@ -79,12 +80,31 @@ Enum.each(clocks, fn clock_attrs ->
 end)
 
 ################## Insert WORKING TIME ##################
+now = DateTime.utc_now()
+
+nowAddOneDay = DateTime.add(now, 1, :day)
+nowAddTwoDay = DateTime.add(now, 2, :day)
+
 workingTimes = [
-  %{start: "2023-10-25 14:35:00", end: "2023-10-25 19:35:00", user_id: "2"},
-  %{start: "2023-10-09 10:31:00", end: "2023-10-09 13:35:00", user_id: "3"},
-  %{start: "2023-10-25 15:35:00", end: "2023-10-25 20:35:00", user_id: "4"},
-  %{start: "2023-10-22 18:35:00", end: "2023-10-22 23:35:00", user_id: "5"},
-  %{start: "2023-10-17 07:35:00", end: "2023-10-17 11:35:00", user_id: "6"},
+  %{start: now, end: DateTime.add(now, 5, :hour), user_id: "2"},
+  %{start: now, end: DateTime.add(now, 5, :hour), user_id: "3"},
+  %{start: now, end: DateTime.add(now, 5, :hour), user_id: "4"},
+
+  %{start: DateTime.add(now, 6, :hour), end: DateTime.add(now, 10, :hour), user_id: "2"},
+  %{start: DateTime.add(now, 6, :hour), end: DateTime.add(now, 10, :hour), user_id: "3"},
+  %{start: DateTime.add(now, 6, :hour), end: DateTime.add(now, 10, :hour), user_id: "4"},
+
+  %{start: nowAddOneDay, end: DateTime.add(nowAddOneDay, 5, :hour), user_id: "2"},
+  %{start: nowAddOneDay, end: DateTime.add(nowAddOneDay, 5, :hour), user_id: "3"},
+  %{start: nowAddOneDay, end: DateTime.add(nowAddOneDay, 5, :hour), user_id: "4"},
+
+  %{start: nowAddTwoDay, end: DateTime.add(nowAddTwoDay, 3, :hour), user_id: "2"},
+  %{start: nowAddTwoDay, end: DateTime.add(nowAddTwoDay, 3, :hour), user_id: "3"},
+  %{start: nowAddTwoDay, end: DateTime.add(nowAddTwoDay, 3, :hour), user_id: "4"},
+
+  %{start: DateTime.add(nowAddTwoDay, 5, :hour), end: DateTime.add(nowAddTwoDay, 7, :hour), user_id: "2"},
+  %{start: DateTime.add(nowAddTwoDay, 5, :hour), end: DateTime.add(nowAddTwoDay, 7, :hour), user_id: "3"},
+  %{start: DateTime.add(nowAddTwoDay, 5, :hour), end: DateTime.add(nowAddTwoDay, 7, :hour), user_id: "4"},
 ]
 
 Enum.each(workingTimes, fn working_time_attrs ->
