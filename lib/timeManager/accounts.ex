@@ -502,7 +502,7 @@ defmodule TimeManager.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_team!(id), do: Repo.get!(Team, id)
+  def get_team!(id), do: Repo.get!(Team, id) |> Repo.preload(:users)
 
   def get_teams_based_on_role(%User{} = current_user) do
     case current_user.role do
