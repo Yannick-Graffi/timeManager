@@ -3,6 +3,7 @@ defmodule TimeManagerWeb.UserController do
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
   alias TimeManager.Repo
+  alias TimeManager.Auth.Guardian
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -63,11 +64,38 @@ defmodule TimeManagerWeb.UserController do
   end
 
   # PUT /users/:id
+  # def update(conn, %{"id" => id, "user" => user_params}) do
   def update(conn, %{"id" => id, "user" => user_params}) do
     try do
-      with {:ok, %User{} = user} <- Accounts.update_user(id, user_params) do
-        render(conn, :show, user: user)
+      connectedUser = Guardian.Plug.current_resource(conn)
+
+      # Check if ID correspond to connected user id
+      if String.to_integer(id) == connectedUser.id do
+        if user_params["currentPassword"] do
+          case Guardian.validate_password(user_params["currentPassword"], connectedUser.password_hash) do
+            false -> # Password doesn't match
+              conn
+              |> put_status(:unauthorized)
+              |> json(%{error: "Incorrect password"})
+            true ->
+              with {:ok, %User{} = user} <- Accounts.update_user(id, user_params) do
+                render(conn, :show, user: user)
+              end
+          end
+        else
+          modified_user_params = Map.put(user_params, "password", nil)
+
+          dbg(modified_user_params)
+          with {:ok, %User{} = user} <- Accounts.update_user(id, modified_user_params) do
+            render(conn, :show, user: user)
+          end
+        end
+      else
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: "User doesn't match"})
       end
+
     rescue
       Ecto.NoResultsError -> conn
       |> put_status(:not_found)

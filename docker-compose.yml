@@ -8,12 +8,10 @@ services:
     working_dir: /app
     environment:
       - MIX_ENV=dev
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=timemanager_dev
-      - DATABASE_URL=ecto://postgres:postgres@db/timemanager_dev
+    env_file:
+      - .env
     ports:
-      - "4000:4000"
+      - "4001:4001"
     depends_on:
       - db
     command: sh -c "mix deps.clean --all && mix deps.get && mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"
@@ -21,9 +19,9 @@ services:
   db:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=timemanager_dev
+      - POSTGRES_USER= ${POSTGRES_USER}
+      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
+      - POSTGRES_DB= ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
