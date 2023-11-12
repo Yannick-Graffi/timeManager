@@ -25,6 +25,7 @@ users = [
   %{username: "bob_jones", email: "bob@example.com", password: "Azerty123456.", role: :manager},
   %{username: "alice_brown", email: "alice@example.com", password: "Azerty123456.", role: :manager},
   %{username: "jane_doe", email: "jane2@example.com", password: "Azerty123456.", role: :general_manager},
+  %{username: "admin2", email: "admin@example.com", password: "Azerty123456.", role: :admin},
 ]
 
 Enum.each(users, fn user_attrs ->

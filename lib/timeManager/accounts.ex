@@ -89,9 +89,7 @@ defmodule TimeManager.Accounts do
     query = from u in User,
                  where: u.id == ^id,
                  preload: [:teams]
-    user_with_teams = Repo.one(query)
-
-    dbg(user_with_teams)
+    Repo.one(query)
   end
 
   @doc """
@@ -320,6 +318,27 @@ defmodule TimeManager.Accounts do
     clock
   end
 
+  defp get_daily_clock(user_id) do
+    today = Date.utc_today()
+    query = from c in Clock,
+      where: fragment("date(?)", c.time) == ^today and c.user_id == ^user_id
+    Repo.all(query)
+  end
+
+  defp get_weekly_clock(user_id) do
+    {start_date, end_date} = get_current_week_dates()
+    query = from c in Clock,
+                 where: fragment("date(?)", c.time) >= ^start_date and fragment("date(?)", c.time) <= ^end_date and c.user_id == ^user_id
+    Repo.all(query)
+  end
+
+  defp get_current_week_dates do
+    today = Date.utc_today()
+    start_of_week = Date.beginning_of_week(today)
+    end_of_week = Date.end_of_week(today)
+    {start_of_week, end_of_week}
+  end
+
   ############### WorkingTime ################
   alias TimeManager.Accounts.WorkingTime
 
@@ -483,7 +502,7 @@ defmodule TimeManager.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_team!(id), do: Repo.get!(Team, id)
+  def get_team!(id), do: Repo.get!(Team, id) |> Repo.preload(:users)
 
   def get_teams_based_on_role(%User{} = current_user) do
     case current_user.role do
@@ -566,4 +585,114 @@ defmodule TimeManager.Accounts do
     team = get_team!(id)
     Repo.delete(team)
   end
+
+  def add_daily_working_hours(teams) do
+    Enum.map(teams, fn %Team{users: users} = team ->
+      updated_users = Enum.map(users, fn user ->
+        clocks = get_daily_clock(user.id)
+        work_hours = calculate_total_hours(clocks)
+        %{user | daily: work_hours}
+      end)
+      %{team | users: updated_users}
+    end)
+  end
+
+  def add_weekly_working_hours(teams) do
+    Enum.map(teams, fn %Team{users: users} = team ->
+      updated_users = Enum.map(users, fn user ->
+        clocks = get_weekly_clock(user.id)
+        work_hours = calculate_total_hours(clocks)
+        %{user | weekly: work_hours}
+      end)
+      %{team | users: updated_users}
+    end)
+  end
+
+  defp calculate_total_hours(clocks) do
+    {last_clock, total_seconds} =
+      clocks
+      |> Enum.sort_by(& &1.time)
+      |> Enum.reduce({nil, 0}, fn clock, {start_clock, total_seconds} ->
+        case {start_clock, clock.status} do
+          {nil, true} -> {clock, total_seconds}
+          {%Clock{time: start_time}, false} ->
+            {nil, total_seconds + DateTime.diff(clock.time, start_time)}
+          _ -> {start_clock, total_seconds}
+        end
+      end)
+
+    total_seconds =
+      case last_clock do
+        nil -> total_seconds
+        %Clock{status: true, time: start_time} ->
+          total_seconds + DateTime.diff(DateTime.utc_now(), start_time) + 3600
+        _ -> total_seconds
+      end
+
+    convert_seconds_to_duration(total_seconds)
+  end
+
+  defp convert_seconds_to_duration(total_seconds) do
+    hours = div(total_seconds, 3600)
+    minutes = div(rem(total_seconds, 3600), 60)
+    format_duration(hours, minutes)
+  end
+
+  defp format_duration(hours, minutes) do
+    "#{hours}:#{pad_zeroes(minutes)}"
+  end
+
+  defp pad_zeroes(number) when number < 10, do: "0#{number}"
+  defp pad_zeroes(number), do: "#{number}"
+
+  def add_daily_and_weekly_averages(teams) do
+    Enum.map(teams, fn %Team{users: users} = team ->
+      {daily_avg, weekly_avg} = calculate_averages(users)
+
+      average_user = %User{
+        id: 0,
+        username: "AVERAGE",
+        email: "",
+        daily: daily_avg,
+        weekly: weekly_avg
+      }
+
+      updated_users = [average_user] ++ users
+      %{team | users: updated_users}
+    end)
+  end
+
+  defp calculate_averages(users) do
+    {total_daily, total_weekly, count} =
+      Enum.reduce(users, {0, 0, 0}, fn user, {daily_acc, weekly_acc, count} ->
+        {daily_acc + duration_to_minutes(user.daily), weekly_acc + duration_to_minutes(user.weekly), count + 1}
+      end)
+
+    if count > 0 do
+      daily_avg = format_duration(div(total_daily, count))
+      weekly_avg = format_duration(div(total_weekly, count))
+      {daily_avg, weekly_avg}
+    else
+      {"0:00", "0:00"}
+    end
+  end
+
+
+  defp duration_to_minutes(duration) when is_binary(duration) do
+    [hours, minutes] = String.split(duration, ":")
+    hours_in_minutes = String.to_integer(hours) * 60
+    total_minutes = hours_in_minutes + String.to_integer(minutes)
+    total_minutes
+  end
+
+  defp duration_to_minutes(_), do: 0
+
+
+  defp format_duration(minutes) when is_integer(minutes) do
+    hours = div(minutes, 60)
+    minutes = rem(minutes, 60)
+    convert_seconds_to_duration(hours * 3600 + minutes * 60)
+  end
+
+
 end

@@ -5,27 +5,30 @@ services:
     build: .
     volumes:
       - .:/app
+      - deps:/app/deps  # Montage du volume pour les dépendances
     working_dir: /app
     environment:
-      - MIX_ENV=dev
-    env_file:
-      - .env
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - "4001:4001"
     depends_on:
       - db
-    command: sh -c "mix deps.clean --all && mix deps.get && mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"
+    command: sh -c "mix ecto.drop --force-drop && mix ecto.setup && mix phx.server && mix run priv/repo/seeds.exs"
 
   db:
     image: postgres:13-alpine
     environment:
-      - POSTGRES_USER= ${POSTGRES_USER}
-      - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
-      - POSTGRES_DB= ${POSTGRES_DB}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+
 volumes:
   postgres_data:
+  deps:  # Déclaration du volume pour les dépendances Elixir
